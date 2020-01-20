@@ -21,7 +21,10 @@
 #include "tim.h"
 
 /* USER CODE BEGIN 0 */
+#include <stdio.h>
 
+extern uint32_t lightSensor1;
+extern uint32_t lightSensor2;
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim7;
@@ -89,7 +92,13 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 } 
 
 /* USER CODE BEGIN 1 */
-
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	if(htim->Instance == TIM7)
+	{
+		ReadSensors(&htim7, &lightSensor1, &lightSensor2);
+	}
+}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

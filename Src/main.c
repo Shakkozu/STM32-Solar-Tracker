@@ -52,7 +52,7 @@
 uint32_t lightSensor1 = 0; //!< Voltage from first sensor
 uint32_t lightSensor2 = 0; //!< Voltage from second sensor
 float max_voltage = 3.3;
-char buffer[100] = "";
+char buffer[100] = ""; //!< Variable used to store send/receive message via UART
 uint8_t size;
 /* USER CODE END PV */
 
@@ -60,23 +60,7 @@ uint8_t size;
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 
-/**
- * Blinks Turns one by one LD1,LD2,LD3 and switches them off
- *
- * @param delay Describes delay between actions (miliseconds)
- */
-void BlinkDiodes(int delay);
 
-/**
- * Timer Period Elapsed Callback
- *
- * When the timer period is elapsed, this function reads values from ADC1 and ADC2.
- * Values are converted to uint_32t type, to avoid operating on float numbers in future.
- * Function also sends ADC readings via UART.
- *
- * @param htim HandleTypeDef for appropriate timer
- */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 
 /* USER CODE END PFP */
 
@@ -132,10 +116,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  if(HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin) == 1)
-	  {
-		  BlinkDiodes(500);
-	  }
+
     /* USER CODE BEGIN 3 */
   }
 
@@ -197,33 +178,6 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-void BlinkDiodes(int delay)
-{
-	HAL_Delay(delay);
-	HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, 1);
-	HAL_Delay(delay);
-	HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);
-	HAL_Delay(delay);
-	HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, 1);
-	HAL_Delay(delay);
-	HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, 0);
-	HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);
-	HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, 0);
-}
-
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-	if(htim->Instance == TIM7)
-	{
-		HAL_ADC_Start(&hadc1);
-		HAL_ADC_Start(&hadc2);
-		while((HAL_ADC_PollForConversion(&hadc1, 10) != HAL_OK) && (HAL_ADC_PollForConversion(&hadc2,10) != HAL_OK));
-		lightSensor1 =  HAL_ADC_GetValue(&hadc1)/((float)0x0fff) * max_voltage*1000;
-		lightSensor2 =  HAL_ADC_GetValue(&hadc2)/((float)0x0fff) * max_voltage*1000;
-		size = sprintf(buffer, "Value1: %lu[V]\r\nValue2: %lu[V]\r\n", lightSensor1,lightSensor2);
-		HAL_UART_Transmit_IT(&huart3, (uint8_t*)buffer, size);
-	}
-}
 /* USER CODE END 4 */
 
 /**
