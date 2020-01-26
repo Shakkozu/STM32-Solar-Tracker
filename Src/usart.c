@@ -21,6 +21,12 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
+extern char received_message[MESSAGE_SIZE];
+
+int device_number=0;
+int value=0;
+char deviceType[3];
+
 
 /* USER CODE END 0 */
 
@@ -107,7 +113,15 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 } 
 
 /* USER CODE BEGIN 1 */
-
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart->Instance == USART3)
+	{
+		sscanf(received_message,"%3s %d=%d",&deviceType,&device_number,&value);
+		SetDevice(deviceType,device_number,value);
+	}
+	HAL_UART_Receive_IT(&huart3, (uint8_t*)received_message, MESSAGE_SIZE);
+}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

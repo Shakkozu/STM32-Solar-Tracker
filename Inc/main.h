@@ -33,15 +33,17 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "functions.h"
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+enum device_t {Led=0,Servo};
 /* USER CODE END ET */
-
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
+#define MAX_VOLTAGE 3.3
+#define MESSAGE_SIZE 9
 
 /* USER CODE END EC */
 
@@ -76,6 +78,14 @@ void Error_Handler(void);
 #define RMII_RXD1_GPIO_Port GPIOC
 #define LD1_Pin GPIO_PIN_0
 #define LD1_GPIO_Port GPIOB
+#define USER_LD4_Pin GPIO_PIN_10
+#define USER_LD4_GPIO_Port GPIOE
+#define USER_LD3_Pin GPIO_PIN_12
+#define USER_LD3_GPIO_Port GPIOE
+#define USER_LD2_Pin GPIO_PIN_14
+#define USER_LD2_GPIO_Port GPIOE
+#define USER_LD1_Pin GPIO_PIN_15
+#define USER_LD1_GPIO_Port GPIOE
 #define RMII_TXD1_Pin GPIO_PIN_13
 #define RMII_TXD1_GPIO_Port GPIOB
 #define LD3_Pin GPIO_PIN_14
@@ -110,6 +120,8 @@ void Error_Handler(void);
 #define SW0_GPIO_Port GPIOB
 #define LD2_Pin GPIO_PIN_7
 #define LD2_GPIO_Port GPIOB
+#define USER_LD5_Pin GPIO_PIN_0
+#define USER_LD5_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

@@ -9,15 +9,21 @@
 #include "main.h"
 #include "stdio.h"
 
+
+
 extern ADC_HandleTypeDef hadc1;
 extern ADC_HandleTypeDef hadc2;
 extern UART_HandleTypeDef huart3;
+extern TIM_HandleTypeDef htim9;
+extern int messageSize;
 extern char buffer[];
-extern uint8_t size;
-extern float max_voltage;
+
+
+
+
 
 /**
- * ReadSensors function
+ * ReadSensors function.
  *
  * This function reads values from ADC1 and ADC2.
  * Values are converted to uint_32t type, to avoid operating on float numbers in future.
@@ -31,9 +37,46 @@ extern float max_voltage;
  */
 void ReadSensors(TIM_HandleTypeDef *htim,uint32_t *lightSensor1,uint32_t *lightSensor2);
 
+
 /**
- * BlinkDiodes function Turns diodes one by one LD1,LD2,LD3 and switches them off
+ * BlinkDiodes function Turns diodes one by one LD1,LD2,LD3 and switches them off.
  *
  * @param delay Describes delay between actions (miliseconds)
  */
 void BlinkDiodes(int delay);
+
+
+/*
+ * SetDevice function properly sets output devices according to message received
+ * via Uart. Received message is decoded in HAL_UART_RxCpltCallback() function.
+ */
+void SetDevice(char deviceType[],int deviceNumb,int val);
+
+
+/*
+ * MoveServo function.
+ * commentary will be updated, when this function will be done.
+ */
+void MoveServo(int val);
+
+
+/*
+ * SendACK function sends affirmative acknowledgement.
+ *
+ * @note Function will be fixed,
+ *
+ * @param deviceType stores information, what type of device was targeted
+ * @param deviceNumb tells, which device was targeted
+ * @param val stores value send to device
+ * @param device - this is only temponary, in final version there will be appropriate enum type
+ */
+void SendACK(char deviceType[],int deviceNumb,int val, int device);
+
+
+
+
+
+
+
+
+
