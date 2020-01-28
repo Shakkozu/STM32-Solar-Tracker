@@ -58,12 +58,12 @@ void SetDevice(char deviceType[],int deviceNumb,int val)
 
 }
 
-void SendACK(char deviceType[],int deviceNumb,int val, int device)
+void SendACK(char deviceType[],int deviceNumb,int val, int device) //po co 4 argument? Nie można zrobić if(deviceType[] = "LED") ?
 {
 	if(device == 0)
 		messageSize = sprintf(buffer,"%s %d=00%d",deviceType,deviceNumb,val);
 	else if(device == 1)
-		messageSize = sprintf(buffer,"%s %d=%d",deviceType,deviceNumb,val);
+		messageSize = sprintf(buffer,"%s %d=%d",deviceType,deviceNumb,val);  // w przypadku np. val=1 zostanie wysłane SRV 1=1 zamiast SRV 1=001
 
 	HAL_UART_Transmit_IT(&huart3,(uint8_t*)buffer,messageSize);
 
