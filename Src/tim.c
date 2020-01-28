@@ -25,7 +25,6 @@
 
 extern uint32_t lightSensor1;
 extern uint32_t lightSensor2;
-extern int duty;
 
 /* USER CODE END 0 */
 
@@ -62,7 +61,7 @@ void MX_TIM9_Init(void)
   htim9.Instance = TIM9;
   htim9.Init.Prescaler = 71;
   htim9.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim9.Init.Period = 999;
+  htim9.Init.Period = 9999;
   htim9.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim9.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_PWM_Init(&htim9) != HAL_OK)
@@ -72,7 +71,7 @@ void MX_TIM9_Init(void)
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
   sConfigOC.Pulse = 500;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  sConfigOC.OCFastMode = TIM_OCFAST_ENABLE;
   if (HAL_TIM_PWM_ConfigChannel(&htim9, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
   {
     Error_Handler();
@@ -193,9 +192,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	{
 		ReadSensors(&htim7, &lightSensor1, &lightSensor2);
 	}
-	else if(htim->Instance == TIM9)
+
+}
+void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
+{
+	if(htim->Instance == TIM9)
 	{
-		//TIM9->CCR1=duty;
+
 	}
 }
 /* USER CODE END 1 */

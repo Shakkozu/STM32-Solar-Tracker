@@ -13,12 +13,13 @@ void ReadSensors(TIM_HandleTypeDef *htim,uint32_t *lightSensor1,uint32_t *lightS
 	HAL_ADC_Start(&hadc1);
 	HAL_ADC_Start(&hadc2);
 	while((HAL_ADC_PollForConversion(&hadc1, 10) != HAL_OK) && (HAL_ADC_PollForConversion(&hadc2,10) != HAL_OK));
-	lightSensor1 =  (uint32_t)(HAL_ADC_GetValue(&hadc1)/((float)0x0fff) * MAX_VOLTAGE*1000) / 33;
-	lightSensor2 =  (uint32_t)(HAL_ADC_GetValue(&hadc2)/((float)0x0fff) * MAX_VOLTAGE*1000) / 33;
-	messageSize = sprintf(buffer, "SEN1 =%lu\r\nSEN2 =%lu", lightSensor1,lightSensor2);
+	lightSensor1 =  (uint32_t)(HAL_ADC_GetValue(&hadc1)/((float)0x0fff) * MAX_VOLTAGE*1000);
+	lightSensor2 =  (uint32_t)(HAL_ADC_GetValue(&hadc2)/((float)0x0fff) * MAX_VOLTAGE*1000);
+	uint32_t retval1 = (uint32_t)lightSensor1/33;
+	uint32_t retval2 = (uint32_t)lightSensor2/33;
+	messageSize = sprintf(buffer, "SEN1 =%lu\r\nSEN2 =%lu", retval1,retval2);
 	HAL_UART_Transmit_IT(&huart3, (uint8_t*)buffer, messageSize);
 }
-
 
 void BlinkDiodes(int delay)
 {
@@ -47,31 +48,34 @@ void SetDevice(char deviceType[],int deviceNumb,int val)
 			case 5:HAL_GPIO_WritePin(USER_LD5_GPIO_Port,USER_LD5_Pin, val); break;
 			default:;
 		}
-		SendACK(deviceType, deviceNumb, val,0);
+		SendACK(deviceType, deviceNumb, val);
 	}
 	else if(!strcmp(deviceType,"SRV"))
 	{
-		//Function to add!!
-		//MoveServo(val);
-		SendACK(deviceType, deviceNumb, val,1);
+		MoveServo(val);
+		SendACK(deviceType, deviceNumb, val);
 	}
 
 }
 
-void SendACK(char deviceType[],int deviceNumb,int val, int device)
+void SendACK(char deviceType[],int deviceNumb,int val)
 {
-	if(device == 0)
+	if(!strcmp(deviceType,"LED"))
 		messageSize = sprintf(buffer,"%s %d=00%d",deviceType,deviceNumb,val);
-	else if(device == 1)
-		messageSize = sprintf(buffer,"%s %d=%d",deviceType,deviceNumb,val);
+	else if(!strcmp(deviceType,"SRV"))
+	{
+		if(val<10) messageSize = sprintf(buffer,"%s %d=00%d",deviceType,deviceNumb,val);
+		else if(val<100) messageSize = sprintf(buffer,"%s %d=0%d",deviceType,deviceNumb,val);
+		else messageSize = sprintf(buffer,"%s %d=%d",deviceType,deviceNumb,val);
+	}
 
 	HAL_UART_Transmit_IT(&huart3,(uint8_t*)buffer,messageSize);
-
-
 }
 
-void MoveServo(int val)
+void MoveServo(int deg)
 {
-	//__HAL_TIM_SET_COMPARE(&htim9,TIM_CHANNEL_1,val*500);
+	//This function needs to be fixed! This is just testing version
+	uint16_t SET_COMPARE = (deg  * __HAL_TIM_GET_AUTORELOAD(&htim9)) / 720.0;
+	__HAL_TIM_SET_COMPARE(&htim9,TIM_CHANNEL_1,SET_COMPARE);
 
 }

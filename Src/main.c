@@ -50,13 +50,14 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+enum device_t device=0;
 char received_message[MESSAGE_SIZE] = {};
 char buffer[100] = ""; //!< Variable used to store send/receive message via UART
 uint32_t lightSensor1 = 0; //!< Voltage from first sensor
 uint32_t lightSensor2 = 0; //!< Voltage from second sensor
-int duty=0;
+int duty=5;
 int messageSize=0; //!< Variable used in transmission. It's created globally to avoid assigning memory every ADC read
+
 
 /* USER CODE END PV */
 
@@ -110,10 +111,12 @@ int main(void)
   MX_TIM7_Init();
   MX_TIM9_Init();
   /* USER CODE BEGIN 2 */
+
+  /* Start timers */
   HAL_TIM_Base_Start_IT(&htim7);
   HAL_TIM_PWM_Start_IT(&htim9, TIM_CHANNEL_1);
+  /* Start listening for incoming messages via uart */
   HAL_UART_Receive_IT(&huart3, (uint8_t*)received_message, MESSAGE_SIZE);
-
   /* USER CODE END 2 */
  
  

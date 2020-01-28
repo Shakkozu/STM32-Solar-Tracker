@@ -25,52 +25,52 @@ extern char buffer[];
 /**
  * ReadSensors function.
  *
- * This function reads values from ADC1 and ADC2.
- * Values are converted to uint_32t type, to avoid operating on float numbers in future.
- * Function also sends ADC readings via UART.
- *
- * @param htim HandleTypeDef for appropriate timer
- * @param lightSensor1 During function call this parameter should be passed by reference to get this value! It stores reading from sensor1 (uint32_t)
- * @param lightSensor2 During function call this parameter should be passed by reference to get this value! It stores reading from sensor2 (uint32_t)
- *
- * @return lighSensor1 and lightSensor2  should be passed by reference to
+ * @brief	This function reads values from ADC1 and ADC2.
+ * @desc	Values are converted to uint_32t type, to avoid operating on float numbers in future.
+ * 			Function also sends ADC readings via UART.
+ * @param 	pointer to a TIM Handler
+ * @param 	lightSensor1 During function call this parameter should be passed by reference to get this value! It stores reading from sensor1 (uint32_t)
+ * @param 	lightSensor2 During function call this parameter should be passed by reference to get this value! It stores reading from sensor2 (uint32_t)
+ * @retval 	none but lighSensor1 and lightSensor2 should be passed by reference to store those values
  */
 void ReadSensors(TIM_HandleTypeDef *htim,uint32_t *lightSensor1,uint32_t *lightSensor2);
 
 
 /**
- * BlinkDiodes function Turns diodes one by one LD1,LD2,LD3 and switches them off.
- *
- * @param delay Describes delay between actions (miliseconds)
+ * @brief	BlinkDiodes function Turns diodes one by one LD1,LD2,LD3 and switches them off.
+ * @param 	delay Describes delay between actions (miliseconds)
+ * @retval 	None
  */
 void BlinkDiodes(int delay);
 
 
-/*
- * SetDevice function properly sets output devices according to message received
- * via Uart. Received message is decoded in HAL_UART_RxCpltCallback() function.
+/* @brief	Set Output devices
+ * @desc	SetDevice function properly sets output devices according to message received
+ * 			via Uart. Received message is decoded in HAL_UART_RxCpltCallback() function.
+ * @param 	deviceType appropriate string describing device ('LED || SRV')
+ * @param 	deviceNumb
+ * @param 	val
+ * @retval 	None
  */
 void SetDevice(char deviceType[],int deviceNumb,int val);
 
 
 /*
- * MoveServo function.
- * commentary will be updated, when this function will be done.
- */
-void MoveServo(int val);
+ * @brief	MoveServo function.
+ * @desc	This function sets servomechanism at given position in degrees (not yet)
+ * @param 	degree given angle in degrees (0-180)
+ * @retval 	None
+ *  */
+void MoveServo(int deg);
 
 
 /*
- * SendACK function sends affirmative acknowledgement.
- *
- * @note Function will be fixed,
- *
- * @param deviceType stores information, what type of device was targeted
+ * @brief	SendACK function sends affirmative acknowledgment.
+ * @param deviceType appropriate string describing device ('LED || SRV')
  * @param deviceNumb tells, which device was targeted
  * @param val stores value send to device
- * @param device - this is only temponary, in final version there will be appropriate enum type
  */
-void SendACK(char deviceType[],int deviceNumb,int val, int device);
+void SendACK(char deviceType[],int deviceNumb,int val);
 
 
 

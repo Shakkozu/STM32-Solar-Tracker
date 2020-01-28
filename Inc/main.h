@@ -40,6 +40,7 @@ extern "C" {
 /* USER CODE BEGIN ET */
 enum device_t {Led=0,Servo};
 /* USER CODE END ET */
+
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
 #define MAX_VOLTAGE 3.3
