@@ -12,7 +12,11 @@ void ReadSensors(TIM_HandleTypeDef *htim,uint32_t *lightSensor1,uint32_t *lightS
 
 	HAL_ADC_Start(&hadc1);
 	HAL_ADC_Start(&hadc2);
-	while((HAL_ADC_PollForConversion(&hadc1, 10) != HAL_OK) && (HAL_ADC_PollForConversion(&hadc2,10) != HAL_OK));
+
+	/* Wait until readings are done */
+	while((HAL_ADC_PollForConversion(&hadc1, 10) != HAL_OK) &&
+			(HAL_ADC_PollForConversion(&hadc2,10) != HAL_OK));
+
 	lightSensor1 =  (uint32_t)(HAL_ADC_GetValue(&hadc1)/((float)0x0fff) * MAX_VOLTAGE*1000);
 	lightSensor2 =  (uint32_t)(HAL_ADC_GetValue(&hadc2)/((float)0x0fff) * MAX_VOLTAGE*1000);
 	uint32_t retval1 = (uint32_t)lightSensor1/33;
@@ -74,8 +78,6 @@ void SendACK(char deviceType[],int deviceNumb,int val)
 
 void MoveServo(int deg)
 {
-	//This function needs to be fixed! This is just testing version
-	uint16_t SET_COMPARE = (deg  * __HAL_TIM_GET_AUTORELOAD(&htim9)) / 720.0;
+	uint16_t SET_COMPARE = deg * SERVO_PARAMETER + SERVO_CONST;
 	__HAL_TIM_SET_COMPARE(&htim9,TIM_CHANNEL_1,SET_COMPARE);
-
 }

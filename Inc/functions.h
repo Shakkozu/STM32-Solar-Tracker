@@ -9,7 +9,9 @@
 #include "main.h"
 #include "stdio.h"
 
-
+/* Servo parameters acquired due to tests */
+#define SERVO_PARAMETER 65
+#define SERVO_CONST 2700
 
 extern ADC_HandleTypeDef hadc1;
 extern ADC_HandleTypeDef hadc2;
@@ -18,20 +20,19 @@ extern TIM_HandleTypeDef htim9;
 extern int messageSize;
 extern char buffer[];
 
-
-
+/* Function prototypes****************************************************************************/
 
 
 /**
- * ReadSensors function.
  *
  * @brief	This function reads values from ADC1 and ADC2.
  * @desc	Values are converted to uint_32t type, to avoid operating on float numbers in future.
  * 			Function also sends ADC readings via UART.
  * @param 	pointer to a TIM Handler
- * @param 	lightSensor1 During function call this parameter should be passed by reference to get this value! It stores reading from sensor1 (uint32_t)
- * @param 	lightSensor2 During function call this parameter should be passed by reference to get this value! It stores reading from sensor2 (uint32_t)
- * @retval 	none but lighSensor1 and lightSensor2 should be passed by reference to store those values
+ * @param 	lightSensor1 handler for reading from sensor 1
+ * @param 	lightSensor2 handler for reading from sensor 2
+ * @retval 	none but lighSensor1 and lightSensor2 should be passed by reference to store those
+ * 			readings
  */
 void ReadSensors(TIM_HandleTypeDef *htim,uint32_t *lightSensor1,uint32_t *lightSensor2);
 

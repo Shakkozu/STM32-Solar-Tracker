@@ -59,9 +59,9 @@ void MX_TIM9_Init(void)
   TIM_OC_InitTypeDef sConfigOC = {0};
 
   htim9.Instance = TIM9;
-  htim9.Init.Prescaler = 71;
+  htim9.Init.Prescaler = 11;
   htim9.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim9.Init.Period = 9999;
+  htim9.Init.Period = 59999;
   htim9.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim9.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_PWM_Init(&htim9) != HAL_OK)
@@ -198,7 +198,6 @@ void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance == TIM9)
 	{
-
 	}
 }
 /* USER CODE END 1 */
