@@ -52,11 +52,15 @@
 /* USER CODE BEGIN PV */
 enum device_t device=0;
 char received_message[MESSAGE_SIZE] = {};
-char buffer[100] = ""; //!< Variable used to store send/receive message via UART
+char buffer[100]="";
 uint32_t lightSensor1 = 0; //!< Voltage from first sensor
 uint32_t lightSensor2 = 0; //!< Voltage from second sensor
 int duty=5;
 int messageSize=0; //!< Variable used in transmission. It's created globally to avoid assigning memory every ADC read
+int position=0;
+
+int actualAngle=0;
+uint_fast32_t actualValue= 0;
 
 
 /* USER CODE END PV */
@@ -115,8 +119,10 @@ int main(void)
   /* Start timers */
   HAL_TIM_Base_Start_IT(&htim7);
   HAL_TIM_PWM_Start_IT(&htim9, TIM_CHANNEL_1);
+  MoveServo(120);
   /* Start listening for incoming messages via uart */
-  HAL_UART_Receive_IT(&huart3, (uint8_t*)received_message, MESSAGE_SIZE);
+  HAL_UART_Receive_IT(&huart3, (uint8_t*)received_message, 1);
+ // ScanArea(actualValue);
   /* USER CODE END 2 */
  
  

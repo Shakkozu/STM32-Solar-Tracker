@@ -22,10 +22,14 @@
 
 /* USER CODE BEGIN 0 */
 extern char received_message[MESSAGE_SIZE];
+extern int position;
 
 int device_number=0;
 int value=0;
 char deviceType[3];
+int res=0;
+int idx =0;
+int datalost =0;
 
 
 /* USER CODE END 0 */
@@ -117,11 +121,40 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	if(huart->Instance == USART3)
 	{
-		sscanf(received_message,"%3s %d=%d",&deviceType,&device_number,&value);
-		SetDevice(deviceType,device_number,value);
+		datalost=0;
+		if(received_message[idx] == 0x0D)
+		{
+
+			if(idx == 9)
+			{
+				sscanf(received_message,"%3s %d=%d",&deviceType,&device_number,&value);
+				if(SetDevice(deviceType,device_number,value) == 1)
+				{
+					SendACK(deviceType, device_number, value);
+					ClearBuffer(received_message, MESSAGE_SIZE);
+					idx=0;
+					datalost = 1;
+				}
+			}
+		}
+		else if(idx > 9) datalost = 0;
+		else
+		{
+			idx++;
+			datalost = 1;
+		}
+
+		if(datalost==0)
+		{
+			idx=0;
+			LossOfData(received_message, MESSAGE_SIZE, huart);
+		}
+
 	}
-	HAL_UART_Receive_IT(&huart3, (uint8_t*)received_message, MESSAGE_SIZE);
+	HAL_UART_Receive_IT(&huart3, &received_message[idx], 1);
 }
+
+
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

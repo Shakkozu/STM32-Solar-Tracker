@@ -34,6 +34,7 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "functions.h"
 #include <string.h>
+#include <math.h>
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -44,7 +45,8 @@ enum device_t {Led=0,Servo};
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
 #define MAX_VOLTAGE 3.3
-#define MESSAGE_SIZE 9
+#define MESSAGE_SIZE 30
+
 
 /* USER CODE END EC */
 

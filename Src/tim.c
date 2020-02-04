@@ -25,6 +25,9 @@
 
 extern uint32_t lightSensor1;
 extern uint32_t lightSensor2;
+extern int actualAngle;
+extern uint_fast32_t actualValue;
+uint32_t temp_val=0;
 
 /* USER CODE END 0 */
 
@@ -190,7 +193,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance == TIM7)
 	{
-		ReadSensors(&htim7, &lightSensor1, &lightSensor2);
+		temp_val = ReadSensors(&htim7, &lightSensor1, &lightSensor2,1);
+		if(abs(actualValue - temp_val)/33 > 10)
+		{
+			//First option
+			//actualAngle = ScanArea(actualValue,1);
+
+			//Second option
+			//actualAngle = RecalibratePosition(&lightSensor1, &lightSensor2, actualAngle);
+		}
 	}
 
 }
