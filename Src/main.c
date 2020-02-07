@@ -50,17 +50,18 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-enum device_t device=0;
-char received_message[MESSAGE_SIZE] = {};
-char buffer[100]="";
+char received_message[MESSAGE_SIZE] = {}; //!< Buffer for received messages
+char buffer[100]=""; //!< Buffer for messages to send
 uint32_t lightSensor1 = 0; //!< Voltage from first sensor
 uint32_t lightSensor2 = 0; //!< Voltage from second sensor
 int duty=5;
 int messageSize=0; //!< Variable used in transmission. It's created globally to avoid assigning memory every ADC read
 int position=0;
+int scanFlag = 0;  //!< This variables tells, that scanMode is on or off
+int autoMode = 1;  //!< this variable takes 1 when automode is on, and 0 when it's off
+int actualAngle=0; //!< Actual value of servo position
+uint_fast32_t actualValue= 0;	 //!< Actual mean value from sensors readings
 
-int actualAngle=0;
-uint_fast32_t actualValue= 0;
 
 
 /* USER CODE END PV */
@@ -119,10 +120,13 @@ int main(void)
   /* Start timers */
   HAL_TIM_Base_Start_IT(&htim7);
   HAL_TIM_PWM_Start_IT(&htim9, TIM_CHANNEL_1);
-  MoveServo(120);
+  MoveServo(90);
+  HAL_GPIO_WritePin(USER_LD3_GPIO_Port, USER_LD3_Pin,1);
   /* Start listening for incoming messages via uart */
   HAL_UART_Receive_IT(&huart3, (uint8_t*)received_message, 1);
- // ScanArea(actualValue);
+  /* Send LED and servo state after start	*/
+  messageSize = sprintf(buffer,"SRV 1=090\rLED 1=000\rLED 2=000\rLED 3=001\rLED 4=000\rLED 5=000\r");
+  HAL_UART_Transmit(&huart3, buffer, messageSize, 500);
   /* USER CODE END 2 */
  
  
@@ -132,6 +136,14 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+
+	  /* Press User BTN to start auto mode with first scan */
+	  if(HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin) == 1 && autoMode == 1)
+	  {
+		  HAL_Delay(100);
+		  HAL_GPIO_TogglePin(LD3_GPIO_Port,LD3_Pin);
+		  actualAngle = ScanArea(actualValue);
+	  }
 
     /* USER CODE BEGIN 3 */
   }

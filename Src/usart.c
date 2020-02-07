@@ -148,6 +148,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		{
 			idx=0;
 			LossOfData(received_message, MESSAGE_SIZE, huart);
+			datalost = 1;
 		}
 
 	}

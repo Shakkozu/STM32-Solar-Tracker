@@ -23,10 +23,12 @@
 /* USER CODE BEGIN 0 */
 #include <stdio.h>
 
+extern int scanFlag;
 extern uint32_t lightSensor1;
 extern uint32_t lightSensor2;
 extern int actualAngle;
 extern uint_fast32_t actualValue;
+extern int autoMode;
 uint32_t temp_val=0;
 
 /* USER CODE END 0 */
@@ -131,10 +133,10 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
   /* USER CODE BEGIN TIM9_MspPostInit 0 */
 
   /* USER CODE END TIM9_MspPostInit 0 */
-  
+
     __HAL_RCC_GPIOE_CLK_ENABLE();
-    /**TIM9 GPIO Configuration    
-    PE5     ------> TIM9_CH1 
+    /**TIM9 GPIO Configuration
+    PE5     ------> TIM9_CH1
     */
     GPIO_InitStruct.Pin = GPIO_PIN_5;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -186,30 +188,34 @@ void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* tim_pwmHandle)
 
   /* USER CODE END TIM9_MspDeInit 1 */
   }
-} 
+}
 
 /* USER CODE BEGIN 1 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance == TIM7)
 	{
-		temp_val = ReadSensors(&htim7, &lightSensor1, &lightSensor2,1);
-		if(abs(actualValue - temp_val)/33 > 10)
-		{
-			//First option
-			//actualAngle = ScanArea(actualValue,1);
 
-			//Second option
-			//actualAngle = RecalibratePosition(&lightSensor1, &lightSensor2, actualAngle);
-		}
 	}
 
 }
 void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
 {
-	if(htim->Instance == TIM9)
+	if(htim->Instance == TIM9 && scanFlag == 0 && autoMode == 1)
 	{
+		/*	Get new reading from sensors every pulse, if mean value of sensors readingg is greater
+		 * 	than selected range, recalibrate servo position
+		*/
+		temp_val =  ReadSensors(&htim7, &lightSensor1, &lightSensor2,1);
+		if(abs(actualValue - temp_val)/40 > 10 && (actualValue != 0) && (scanFlag == 0))
+		{
+			actualAngle = RecalibratePosition();
+		}
+
 	}
+
+
+
 }
 /* USER CODE END 1 */
 

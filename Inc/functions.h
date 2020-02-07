@@ -13,6 +13,10 @@
 #define SERVO_PARAMETER 65
 #define SERVO_CONST 2700
 
+
+extern int scanFlag;
+extern int actualAngle;
+extern uint_fast32_t actualValue;
 extern uint32_t lightSensor1;
 extern uint32_t lightSensor2;
 extern ADC_HandleTypeDef hadc1;
@@ -21,6 +25,7 @@ extern UART_HandleTypeDef huart3;
 extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim9;
 extern int messageSize;
+extern int autoMode;
 extern char buffer[];
 
 /* Function prototypes****************************************************************************/
@@ -32,14 +37,14 @@ extern char buffer[];
  * @desc	Values are converted to uint_32t type, to avoid operating on float numbers in future.
  *
  * @param 	pointer to a TIM Handler
- * @param 	lightSensor1 handler for reading from sensor 1
- * @param 	lightSensor2 handler for reading from sensor 2
+ * @param 	lightSensor11 handler for reading from sensor 1
+ * @param 	lightSensor21 handler for reading from sensor 2
  * @param	mode this parameter is designed to let user choose between sending information
  * 			retrieved from sensors via UART, or not sending them
  * @retval 	Function returns levelized sensors value
  *
  */
-uint32_t ReadSensors(TIM_HandleTypeDef *htim,uint32_t *lightSensor1,uint32_t *lightSensor2, int mode);
+uint32_t ReadSensors(TIM_HandleTypeDef *htim,uint32_t *lightSensor11,uint32_t *lightSensor21, int mode);
 
 
 /*
@@ -62,7 +67,7 @@ void BlinkDiodes(int delay);
  * @desc	SetDevice function properly sets output devices according to message received
  * 			via Uart. Received message is decoded in HAL_UART_RxCpltCallback() function.
  * @param 	deviceType appropriate string describing device ('LED || SRV')
- * @param 	deviceNumb
+ * @param 	deviceNumb number of selected device, range: servo - 1, LED : <0:5>
  * @param 	val
  * @retval 	Function returns 1 if parameters were in supposed range or 0 otherwise
  */
@@ -108,10 +113,14 @@ void LossOfData(char buffer[], int buffer_size, UART_HandleTypeDef *huart);
  * @desc	After first scan, this function should Start TIM7, to do
  * 			that effectively, parameter 'mode' is used.
  * @param	maxResult variable stores maximum value received during scan
- * @param 	mode If mode equals 0, function starts TIM7 after scan
  * */
-int ScanArea(uint32_t *maxResult, int mode);
+int ScanArea(uint32_t *maxResult);
 
+/*
+ * @brief	RecalibratePosition function updates servo position
+ * @retval	updated servo position <0:180>
+ * */
+int RecalibratePosition();
 
 
 
